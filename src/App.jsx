@@ -7,6 +7,7 @@ import Home from './pages/Home';
 import Trending from './pages/Trending';
 import Gaming from './pages/Gaming';
 import SavedVideos from './pages/SavedVideos';
+import LikedVideos from './pages/LikedVideos';
 import VideoDetail from './pages/VideoDetail';
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
                 <Route path="/trending" element={<Trending />} />
                 <Route path="/gaming" element={<Gaming />} />
                 <Route path="/saved" element={<SavedVideos />} />
+                <Route path="/liked" element={<LikedVideos />} />
                 <Route path="/video/:id" element={<VideoDetail />} />
               </Routes>
             </main>
