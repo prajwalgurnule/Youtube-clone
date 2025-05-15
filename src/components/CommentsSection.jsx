@@ -116,7 +116,7 @@ const CommentsSection = ({ videoId }) => {
               key={comment.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex items-start p-3 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              className="flex items-start p-3 bg-gray-50 dark:bg-gray-700 hover:bg-red-50  rounded-lg transition-colors"
             >
               <div className="flex-shrink-0 mr-3">
                 <div className="w-10 h-10 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center">

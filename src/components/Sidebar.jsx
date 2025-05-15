@@ -35,7 +35,7 @@ const Sidebar = ({ sidebarOpen }) => {
       initial={{ width: sidebarOpen ? '240px' : '80px' }}
       animate={{ width: sidebarOpen ? '240px' : '80px' }}
       transition={{ duration: 0.3 }}
-      className={`h-full bg-white dark:bg-gray-800 shadow-md overflow-hidden flex-shrink-0 flex flex-col`}
+      className={`h-full bg-white dark:bg-[#0f0f0f] shadow-md overflow-hidden flex-shrink-0 flex flex-col`}
     >
       <div className="flex-1 overflow-y-auto">
         <div className="p-4">

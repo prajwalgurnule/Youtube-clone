@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import VideoCard from '../components/VideoCard';
 import { motion } from 'framer-motion';
-import { FiBookmark, FiTrash2 } from 'react-icons/fi';
+import { FiBookmark,FiSave, FiTrash2 } from 'react-icons/fi';
 import useVideos from '../hooks/useVideos';
 
 const SavedVideos = () => {
@@ -65,7 +65,7 @@ const SavedVideos = () => {
     <div className="p-4">
       <div className="flex items-center mb-6">
         <div className="p-3 mr-4 bg-red-100 dark:bg-red-900 rounded-full">
-          <FiBookmark className="text-red-600 dark:text-red-300 text-xl" />
+          <FiSave className="text-red-600 dark:text-red-300 text-xl" />
         </div>
         <h1 className="text-2xl font-bold">Saved Videos</h1>
       </div>

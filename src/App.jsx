@@ -16,7 +16,7 @@ function App() {
   return (
     <ThemeProvider>
       <Router>
-        <div className="flex flex-col min-h-screen dark:bg-gray-900 dark:text-white">
+        <div className="flex flex-col min-h-screen dark:bg-[#0f0f0f] dark:text-white">
           <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
           <div className="flex flex-1">
             <Sidebar sidebarOpen={sidebarOpen} />
