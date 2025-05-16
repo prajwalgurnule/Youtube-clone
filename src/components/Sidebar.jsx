@@ -18,8 +18,13 @@ const Sidebar = ({ sidebarOpen }) => {
 
   useEffect(() => {
     const loadSubscriptions = () => {
-      const channels = JSON.parse(localStorage.getItem('subscribedChannels')) || [];
-      setSubscribedChannels(channels);
+      try {
+        const channels = JSON.parse(localStorage.getItem('subscribedChannels') || '[]');
+        setSubscribedChannels(channels);
+      } catch (error) {
+        console.error('Error parsing subscribed channels:', error);
+        setSubscribedChannels([]);
+      }
     };
 
     // Load initial subscriptions
