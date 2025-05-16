@@ -10,8 +10,8 @@ const VideoCard = ({ video }) => {
 
   // Check if video is saved or liked from localStorage on component mount
   useState(() => {
-    const savedVideos = JSON.parse(localStorage.getItem('savedVideos') || '[]');
-    const likedVideos = JSON.parse(localStorage.getItem('likedVideos') || '[]');
+    const savedVideos = JSON.parse(localStorage.getItem('savedVideos')) || [];
+    const likedVideos = JSON.parse(localStorage.getItem('likedVideos')) || [];
     
     setIsSaved(savedVideos.includes(video.id));
     setIsLiked(likedVideos.includes(video.id));
@@ -45,7 +45,7 @@ const VideoCard = ({ video }) => {
     e.preventDefault();
     e.stopPropagation();
     
-    const savedVideos = JSON.parse(localStorage.getItem('savedVideos') || '[]');
+    const savedVideos = JSON.parse(localStorage.getItem('savedVideos')) || [];
     let updatedVideos;
     
     if (isSaved) {
@@ -64,7 +64,7 @@ const VideoCard = ({ video }) => {
     e.preventDefault();
     e.stopPropagation();
     
-    const likedVideos = JSON.parse(localStorage.getItem('likedVideos') || '[]');
+    const likedVideos = JSON.parse(localStorage.getItem('likedVideos')) || [];
     let updatedVideos;
     
     if (isLiked) {

@@ -18,7 +18,7 @@ const Sidebar = ({ sidebarOpen }) => {
 
   useEffect(() => {
     const loadSubscriptions = () => {
-      const channels = JSON.parse(localStorage.getItem('subscribedChannels') || []);
+      const channels = JSON.parse(localStorage.getItem('subscribedChannels')) || [];
       setSubscribedChannels(channels);
     };
 

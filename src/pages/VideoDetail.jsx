@@ -23,9 +23,9 @@ const VideoDetail = () => {
 
   // Load saved, liked, and subscribed status from localStorage
   useEffect(() => {
-    const savedVideos = JSON.parse(localStorage.getItem('savedVideos') || '[]');
-    const likedVideos = JSON.parse(localStorage.getItem('likedVideos') || '[]');
-    const subscribedChannels = JSON.parse(localStorage.getItem('subscribedChannels') || '[]');
+    const savedVideos = JSON.parse(localStorage.getItem('savedVideos')) || [];
+    const likedVideos = JSON.parse(localStorage.getItem('likedVideos')) || [];
+    const subscribedChannels = JSON.parse(localStorage.getItem('subscribedChannels')) || [];
     
     setIsSaved(savedVideos.includes(id));
     setIsLiked(likedVideos.includes(id));
