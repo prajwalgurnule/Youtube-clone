@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import VideoCard from '../components/VideoCard';
 import { motion } from 'framer-motion';
-import { FiBookmark,FiSave, FiTrash2 } from 'react-icons/fi';
+import { FiBookmark,FiSave } from 'react-icons/fi';
 import useVideos from '../hooks/useVideos';
 
 const SavedVideos = () => {
@@ -26,21 +26,21 @@ const SavedVideos = () => {
 
   // Load saved video IDs from localStorage
   useEffect(() => {
-    const savedVideos = JSON.parse(localStorage.getItem('savedVideos') || []);
+    const savedVideos = JSON.parse(localStorage.getItem('savedVideos')) || [];
     setSavedVideoIds(savedVideos);
   }, [storageChange]);
 
   // Filter videos to only show saved ones
   const savedVideos = allVideos.filter(video => savedVideoIds.includes(video.id));
 
-  const handleRemoveSavedVideo = (videoId) => {
-    const updatedVideos = savedVideoIds.filter(id => id !== videoId);
-    localStorage.setItem('savedVideos', JSON.stringify(updatedVideos));
-    setSavedVideoIds(updatedVideos);
+  // const handleRemoveSavedVideo = (videoId) => {
+  //   const updatedVideos = savedVideoIds.filter(id => id !== videoId);
+  //   localStorage.setItem('savedVideos', JSON.stringify(updatedVideos));
+  //   setSavedVideoIds(updatedVideos);
     
-    // Dispatch event to notify other components
-    window.dispatchEvent(new Event('storageUpdated'));
-  };
+  //   // Dispatch event to notify other components
+  //   window.dispatchEvent(new Event('storageUpdated'));
+  // };
 
   if (loading) {
     return (
@@ -84,12 +84,12 @@ const SavedVideos = () => {
               className="relative"
             >
               <VideoCard video={video} />
-              <button
+              {/* <button
                 onClick={() => handleRemoveSavedVideo(video.id)}
-                className="absolute top-2 right-2 p-2 bg-black bg-opacity-70 text-white rounded-full hover:bg-opacity-100 transition-all"
+                className="absolute top-11 right-2 p-2 bg-black bg-opacity-70 text-white rounded-full hover:bg-opacity-100 transition-all"
               >
                 <FiTrash2 size={18} />
-              </button>
+              </button> */}
             </motion.div>
           ))}
         </motion.div>

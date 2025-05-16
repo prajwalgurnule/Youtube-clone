@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import {  FiThumbsDown } from 'react-icons/fi';
+import { FiThumbsDown, FiCheck } from 'react-icons/fi';
 import VideoCard from '../components/VideoCard';
 import CommentsSection from '../components/CommentsSection';
 
@@ -19,14 +19,20 @@ const VideoDetail = () => {
   const [isSaved, setIsSaved] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [isDisliked, setIsDisliked] = useState(false);
+  const [isSubscribed, setIsSubscribed] = useState(false);
 
-  // Load saved and liked status from localStorage
+  // Load saved, liked, and subscribed status from localStorage
   useEffect(() => {
     const savedVideos = JSON.parse(localStorage.getItem('savedVideos') || '[]');
     const likedVideos = JSON.parse(localStorage.getItem('likedVideos') || '[]');
+    const subscribedChannels = JSON.parse(localStorage.getItem('subscribedChannels') || '[]');
+    
     setIsSaved(savedVideos.includes(id));
     setIsLiked(likedVideos.includes(id));
-  }, [id]);
+    if (video) {
+      setIsSubscribed(subscribedChannels.some(ch => ch.id === video.channel.id));
+    }
+  }, [id, video]);
 
   const fetchVideo = async () => {
     try {
@@ -78,8 +84,6 @@ const VideoDetail = () => {
     
     localStorage.setItem('savedVideos', JSON.stringify(updatedVideos));
     setIsSaved(!isSaved);
-    
-    // Dispatch event to notify other components
     window.dispatchEvent(new Event('storageUpdated'));
   };
 
@@ -98,8 +102,6 @@ const VideoDetail = () => {
     
     localStorage.setItem('likedVideos', JSON.stringify(updatedVideos));
     setIsLiked(!isLiked);
-    
-    // Dispatch event to notify other components
     window.dispatchEvent(new Event('storageUpdated'));
   };
 
@@ -111,6 +113,27 @@ const VideoDetail = () => {
       setIsLiked(false);
     }
     setIsDisliked(!isDisliked);
+  };
+
+  const handleSubscribe = () => {
+    if (!video) return;
+    
+    const subscribedChannels = JSON.parse(localStorage.getItem('subscribedChannels') || '[]');
+    let updatedChannels;
+    
+    if (isSubscribed) {
+      updatedChannels = subscribedChannels.filter(ch => ch.id !== video.channel.id);
+    } else {
+      updatedChannels = [...subscribedChannels, {
+        id: video.channel.id,
+        name: video.channel.name,
+        profile_image_url: video.channel.profile_image_url
+      }];
+    }
+    
+    localStorage.setItem('subscribedChannels', JSON.stringify(updatedChannels));
+    setIsSubscribed(!isSubscribed);
+    window.dispatchEvent(new Event('storageUpdated'));
   };
 
   if (loading) return <div className="p-4">Loading...</div>;
@@ -151,7 +174,7 @@ const VideoDetail = () => {
             <div className="flex items-center space-x-2 flex-wrap gap-2">
               <button 
                 onClick={handleLikeVideo}
-                className={`flex items-center px-3 py-2 rounded-full ${isLiked ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600'}`}
+                className={`flex items-center px-3 py-2 rounded-full ${isLiked ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400' : 'bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600'}`}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
@@ -161,18 +184,15 @@ const VideoDetail = () => {
               
               <button 
                 onClick={handleDislikeVideo}
-                className={`flex items-center px-3 py-2 rounded-full ${isDisliked ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600'}`}
+                className={`flex items-center px-3 py-2 rounded-full ${isDisliked ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400' : 'bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600'}`}
               >
-                {/* <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018c.163 0 .326.02.485.06L17 4m0 0v9m0-9h2.765a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 13H9" />
-                </svg> */}
                 <FiThumbsDown size={18} />
                 Dislike
               </button>
               
               <button 
                 onClick={handleSaveVideo}
-                className={`flex items-center px-3 py-2 rounded-full ${isSaved ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600'}`}
+                className={`flex items-center px-3 py-2 rounded-full ${isSaved ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400' : 'bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600'}`}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
@@ -180,8 +200,16 @@ const VideoDetail = () => {
                 {isSaved ? 'Saved' : 'Save'}
               </button>
               
-              <button className="bg-red-600 text-white px-4 py-2 rounded-full hover:bg-red-700 transition-colors">
-                Subscribe
+              <button 
+                onClick={handleSubscribe}
+                className={`flex items-center px-4 py-2 rounded-full ${isSubscribed ? 'bg-gray-200 text-gray-800 dark:bg-gray-600 dark:text-white' : 'bg-red-600 text-white hover:bg-red-700'}`}
+              >
+                {isSubscribed ? (
+                  <>
+                    <FiCheck className="mr-1" />
+                    Subscribed
+                  </>
+                ) : 'Subscribe'}
               </button>
             </div>
           </div>

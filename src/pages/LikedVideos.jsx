@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import VideoCard from '../components/VideoCard';
 import { motion } from 'framer-motion';
-import { FiThumbsUp, FiTrash2 } from 'react-icons/fi';
+import { FiThumbsUp } from 'react-icons/fi';
 import useVideos from '../hooks/useVideos';
 
 const LikedVideos = () => {
@@ -33,14 +33,14 @@ const LikedVideos = () => {
   // Filter videos to only show liked ones
   const likedVideos = allVideos.filter(video => likedVideoIds.includes(video.id));
 
-  const handleUnlikeVideo = (videoId) => {
-    const updatedVideos = likedVideoIds.filter(id => id !== videoId);
-    localStorage.setItem('likedVideos', JSON.stringify(updatedVideos));
-    setLikedVideoIds(updatedVideos);
+  // const handleUnlikeVideo = (videoId) => {
+  //   const updatedVideos = likedVideoIds.filter(id => id !== videoId);
+  //   localStorage.setItem('likedVideos', JSON.stringify(updatedVideos));
+  //   setLikedVideoIds(updatedVideos);
     
-    // Dispatch event to notify other components
-    window.dispatchEvent(new Event('storageUpdated'));
-  };
+  //   // Dispatch event to notify other components
+  //   window.dispatchEvent(new Event('storageUpdated'));
+  // };
 
   if (loading) {
     return (
@@ -84,12 +84,12 @@ const LikedVideos = () => {
               className="relative"
             >
               <VideoCard video={video} />
-              <button
+              {/* <button
                 onClick={() => handleUnlikeVideo(video.id)}
-                className="absolute top-2 right-2 p-2 bg-black bg-opacity-70 text-white rounded-full hover:bg-opacity-100 transition-all"
+                className="absolute top-11 right-2 p-2 bg-black bg-opacity-70 text-white rounded-full hover:bg-opacity-100 transition-all"
               >
                 <FiTrash2 size={18} />
-              </button>
+              </button> */}
             </motion.div>
           ))}
         </motion.div>

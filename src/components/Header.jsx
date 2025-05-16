@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { FiMenu, FiSearch, FiBell, FiMic, FiX, FiUser, FiLogOut } from 'react-icons/fi';
 import { FaYoutube } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -15,6 +15,7 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const navigate = useNavigate();
+  const searchInputRef = useRef(null);
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -40,6 +41,14 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
     }
   };
 
+  const resetSearch = () => {
+    setSearchQuery('');
+    navigate('/');
+    if (searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  };
+
   const handleVoiceSearch = () => {
     if (!('webkitSpeechRecognition' in window)) {
       alert('Your browser does not support voice recognition. Please try Chrome.');
@@ -49,6 +58,7 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
     const recognition = new window.webkitSpeechRecognition();
     recognition.continuous = false;
     recognition.interimResults = false;
+    recognition.lang = 'en-US';
 
     recognition.onstart = () => {
       setIsListening(true);
@@ -57,7 +67,9 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
     recognition.onresult = (event) => {
       const transcript = event.results[0][0].transcript;
       setSearchQuery(transcript);
-      navigate(`/?search=${encodeURIComponent(transcript)}`);
+      if (transcript.trim()) {
+        navigate(`/?search=${encodeURIComponent(transcript.trim())}`);
+      }
       setIsListening(false);
     };
 
@@ -123,23 +135,40 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
             <div className="hidden md:flex flex-1 max-w-2xl mx-4">
               <form onSubmit={handleSearch} className="w-full">
                 <div className="relative flex items-center">
-                  <input
-                    type="text"
-                    placeholder="Search"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full py-2 px-4 rounded-l-full border border-gray-300 dark:border-gray-600 dark:bg-[#121212] focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500"
-                  />
-                  <button
-                    type="submit"
-                    className="px-4 py-2 rounded-r-full border border-l-0 border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-[#222222] hover:bg-red-200 dark:hover:bg-[#333333]"
-                  >
-                    <FiSearch className="text-xl" />
-                  </button>
+                  <div className="flex w-full max-w-xl">
+                    <div className="relative flex-grow">
+                      <input
+                        ref={searchInputRef}
+                        type="text"
+                        placeholder="Search"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full h-10 pl-10 pr-10 rounded-l-full border border-gray-300 dark:border-gray-600 dark:bg-[#121212] text-sm focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-red-500"
+                      />
+                      <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 text-lg" />
+                      {searchQuery && (
+                        <button
+                          type="button"
+                          onClick={resetSearch}
+                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                        >
+                          <FiX className="text-lg" />
+                        </button>
+                      )}
+                    </div>
+                    <button
+                      type="submit"
+                      className="w-16 h-10 flex items-center justify-center rounded-r-full border border-l-0 border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-[#222222] hover:bg-gray-200 dark:hover:bg-[#333333]"
+                    >
+                      <FiSearch className="text-xl text-gray-700 dark:text-gray-300" />
+                    </button>
+                  </div>
+
                   <button
                     type="button"
                     onClick={handleVoiceSearch}
-                    className={`ml-2 p-2 rounded-full ${isListening ? 'bg-red-100 dark:bg-red-900 animate-pulse' : 'hover:bg-gray-200 dark:hover:bg-red-700'}`}
+                    className={`ml-2 p-2 rounded-full ${isListening ? 'bg-red-100 dark:bg-red-900 animate-pulse' : 'hover:bg-gray-200 dark:hover:bg-gray-700'}`}
+                    aria-label="Search by voice"
                   >
                     <FiMic className="text-xl" />
                   </button>
@@ -172,11 +201,21 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="w-full py-2 px-4 rounded-full border border-gray-300 dark:border-gray-600 dark:bg-[#121212] focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                       autoFocus
+                      ref={searchInputRef}
                     />
+                    {searchQuery && (
+                      <button
+                        type="button"
+                        onClick={resetSearch}
+                        className="absolute right-10 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                      >
+                        <FiX className="text-lg" />
+                      </button>
+                    )}
                     <button
                       type="button"
                       onClick={handleVoiceSearch}
-                      className={`absolute right-3 p-1 ${isListening ? 'text-red-500' : 'text-gray-500'}`}
+                      className={`absolute right-3 p-1 ${isListening ? 'text-red-500 animate-pulse' : 'text-gray-500'}`}
                     >
                       <FiMic className="text-xl" />
                     </button>
@@ -286,12 +325,6 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
                         <p className="text-sm">Signed in as</p>
                         <p className="text-sm font-medium">User</p>
                       </div>
-                      {/* <button
-                        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                      >
-                        <FiUser className="mr-3" />
-                        Your Channel
-                      </button> */}
                       <button
                         className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                       >

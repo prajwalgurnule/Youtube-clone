@@ -5,15 +5,34 @@ import {
   FiTrendingUp, 
   FiSave, 
   FiPlay,
-  FiMusic,
-  // FiAward,
-  FiFilm,
-  FiRadio,
   FiSettings,
-  FiThumbsUp
+  FiThumbsUp,
+  FiHelpCircle,
+  FiFlag,
+  FiSend
 } from 'react-icons/fi';
+import { useState, useEffect } from 'react';
 
 const Sidebar = ({ sidebarOpen }) => {
+  const [subscribedChannels, setSubscribedChannels] = useState([]);
+
+  useEffect(() => {
+    const loadSubscriptions = () => {
+      const channels = JSON.parse(localStorage.getItem('subscribedChannels') || []);
+      setSubscribedChannels(channels);
+    };
+
+    // Load initial subscriptions
+    loadSubscriptions();
+
+    // Listen for storage updates
+    window.addEventListener('storageUpdated', loadSubscriptions);
+
+    return () => {
+      window.removeEventListener('storageUpdated', loadSubscriptions);
+    };
+  }, []);
+
   const menuLinks = [
     { to: '/', icon: <FiHome />, text: 'Home' },
     { to: '/trending', icon: <FiTrendingUp />, text: 'Trending' },
@@ -22,12 +41,11 @@ const Sidebar = ({ sidebarOpen }) => {
     { to: '/liked', icon: <FiThumbsUp />, text: 'Liked Videos' },
   ];
 
-  const categoryLinks = [
-    { icon: <FiMusic />, text: 'Music' },
-    // { icon: <FiAward />, text: 'Sports' },
-    { icon: <FiFilm />, text: 'Movies' },
-    { icon: <FiRadio />, text: 'Live' },
-    { icon: <FiSettings />, text: 'Settings' },
+  const settingsLinks = [
+    { to: '/settings', icon: <FiSettings />, text: 'Settings' },
+    { to: '/help', icon: <FiHelpCircle />, text: 'Help' },
+    { to: '/feedback', icon: <FiSend />, text: 'Send feedback' },
+    { to: '/report', icon: <FiFlag />, text: 'Report history' },
   ];
 
   return (
@@ -79,7 +97,43 @@ const Sidebar = ({ sidebarOpen }) => {
             ))}
           </ul>
 
-          {/* CATEGORIES Section */}
+          {/* SUBSCRIPTIONS Section - Only shown if there are subscriptions */}
+          {subscribedChannels.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.1 }}
+            >
+              {sidebarOpen && (
+                <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mt-6 mb-2">
+                  SUBSCRIPTIONS
+                </h2>
+              )}
+              <ul className="space-y-1">
+                {subscribedChannels.map((channel) => (
+                  <li key={channel.id}>
+                    <NavLink
+                      // to={`/channel/${channel.id}`}
+                      className="flex items-center p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      <img 
+                        src={channel.profile_image_url} 
+                        alt={channel.name}
+                        className="w-6 h-6 rounded-full"
+                      />
+                      {sidebarOpen && (
+                        <span className="ml-3">
+                          {channel.name}
+                        </span>
+                      )}
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+          )}
+
+          {/* SETTINGS Section */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -87,20 +141,29 @@ const Sidebar = ({ sidebarOpen }) => {
           >
             {sidebarOpen && (
               <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mt-6 mb-2">
-                CATEGORIES
+                SETTINGS
               </h2>
             )}
             <ul className="space-y-1">
-              {categoryLinks.map((link, index) => (
-                <li key={index}>
-                  <button className="flex items-center w-full p-3 rounded-lg transition-colors hover:bg-gray-100 dark:hover:bg-gray-700">
+              {settingsLinks.map((link) => (
+                <li key={link.to}>
+                  <NavLink
+                    to={link.to}
+                    className={({ isActive }) =>
+                      `flex items-center p-3 rounded-lg transition-colors ${
+                        isActive
+                          ? 'bg-red-100 text-red-600 dark:bg-gray-700 dark:text-red-400'
+                          : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+                      }`
+                    }
+                  >
                     <span className="text-xl">{link.icon}</span>
                     {sidebarOpen && (
                       <span className="ml-3">
                         {link.text}
                       </span>
                     )}
-                  </button>
+                  </NavLink>
                 </li>
               ))}
             </ul>

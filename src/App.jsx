@@ -9,6 +9,10 @@ import Gaming from './pages/Gaming';
 import SavedVideos from './pages/SavedVideos';
 import LikedVideos from './pages/LikedVideos';
 import VideoDetail from './pages/VideoDetail';
+import Settings from './pages/Settings';
+import ReportHistory from './pages/ReportHistory';
+import Feedback from './pages/Feedback';
+import Help from './pages/Help';
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -28,6 +32,10 @@ function App() {
                 <Route path="/saved" element={<SavedVideos />} />
                 <Route path="/liked" element={<LikedVideos />} />
                 <Route path="/video/:id" element={<VideoDetail />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/help" element={<Help />} />
+                <Route path="/report" element={<ReportHistory />} />
+                <Route path="/feedback" element={<Feedback />} />
               </Routes>
             </main>
           </div>
