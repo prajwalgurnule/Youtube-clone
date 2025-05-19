@@ -115,6 +115,38 @@ const VideoDetail = () => {
     setIsDisliked(!isDisliked);
   };
 
+  const handleTimestampClick = (timestamp) => {
+  // Convert timestamp (e.g., "1:23" or "1:23:45") to seconds
+  const parts = timestamp.split(':').map(part => parseInt(part));
+  let seconds = 0;
+  
+  if (parts.length === 3) { // hh:mm:ss
+    seconds = parts[0] * 3600 + parts[1] * 60 + parts[2];
+  } else if (parts.length === 2) { // mm:ss
+    seconds = parts[0] * 60 + parts[1];
+  } else { // ss
+    seconds = parts[0];
+  }
+  
+  // Get the iframe element
+  const iframe = document.querySelector('iframe');
+  
+  if (iframe) {
+    // Extract the video ID from the current src
+    const videoId = video.video_url.split('v=')[1];
+    
+    // Create a new URL with the start parameter
+    const newSrc = `https://www.youtube.com/embed/${videoId}?autoplay=1&start=${seconds}`;
+    
+    // Update the iframe src to force a reload at the new timestamp
+    iframe.src = newSrc;
+    
+    // Focus the iframe to ensure keyboard controls work
+    iframe.focus();
+  }
+};
+  
+
   const handleSubscribe = () => {
     if (!video) return;
     
@@ -229,7 +261,10 @@ const VideoDetail = () => {
             </p>
           </div>
 
-          <CommentsSection videoId={id} />
+          <CommentsSection 
+            videoId={id} 
+            onTimestampClick={handleTimestampClick} 
+          />
         </div>
 
         <div className="w-full md:w-80 flex-shrink-0">
@@ -270,3 +305,4 @@ const VideoDetail = () => {
 };
 
 export default VideoDetail;
+

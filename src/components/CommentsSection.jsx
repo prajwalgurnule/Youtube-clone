@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
-const CommentsSection = ({ videoId }) => {
+const CommentsSection = ({ videoId, onTimestampClick }) => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   const [editingCommentId, setEditingCommentId] = useState(null);
@@ -73,6 +73,37 @@ const CommentsSection = ({ videoId }) => {
     });
   };
 
+  // Function to detect and render timestamps in comments
+  const renderCommentText = (text) => {
+    // Regular expression to match timestamps like 1:23, 12:34, 1:23:45
+    const timestampRegex = /(\d+:\d+(?::\d+)?)/g;
+    
+    return text.split('\n').map((paragraph, i) => (
+      <p key={i} className="mb-2">
+        {paragraph.split(timestampRegex).map((part, j) => {
+          if (part.match(timestampRegex)) {
+            return (
+              <button
+                key={j}
+                onClick={() => handleTimestampClick(part)}
+                className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+              >
+                {part}
+              </button>
+            );
+          }
+          return part;
+        })}
+      </p>
+    ));
+  };
+
+  const handleTimestampClick = (timestamp) => {
+    if (onTimestampClick) {
+      onTimestampClick(timestamp);
+    }
+  };
+
   return (
     <div className="mt-8">
       <h3 className="text-xl font-semibold mb-4">Comments ({comments.length})</h3>
@@ -88,7 +119,7 @@ const CommentsSection = ({ videoId }) => {
           <textarea
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
-            placeholder="Add a comment..."
+            placeholder="Add a comment... (Include timestamps like 1:23 to make them clickable)"
             className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800"
             rows="2"
           />
@@ -116,7 +147,7 @@ const CommentsSection = ({ videoId }) => {
               key={comment.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex items-start p-3 bg-gray-50 dark:bg-gray-700 hover:bg-red-50  rounded-lg transition-colors"
+              className="flex items-start p-3 bg-gray-50 dark:bg-gray-700 hover:bg-red-50 dark:hover:bg-gray-600 rounded-lg transition-colors"
             >
               <div className="flex-shrink-0 mr-3">
                 <div className="w-10 h-10 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center">
@@ -156,9 +187,9 @@ const CommentsSection = ({ videoId }) => {
                     </div>
                   </div>
                 ) : (
-                  <p className="text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
-                    {comment.text}
-                  </p>
+                  <div className="text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
+                    {renderCommentText(comment.text)}
+                  </div>
                 )}
               </div>
               
